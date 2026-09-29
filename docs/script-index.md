@@ -1,0 +1,34 @@
+# Script index and implementation notes
+
+This index describes the files present on 29 September 2026. Names and dependencies come from the scripts; outputs and required packages should be checked again when each script is run. Filenames are preserved at the repository root for now.
+
+| Stage | Script | Main input or role |
+| --- | --- | --- |
+| UKHLS preparation | `U1.1_indresp_ghq_lfs.do` | Original waves 1–14 preparation; produces `ind_ghq_lfs.dta` and event-related files. |
+| UKHLS preparation with household ID | `U1.1_indresp_ghq_lfs_keep_hidp.do` | Alternative differing only by keeping `hidp` in `ind_event.dta`; `ind_ghq_lfs.dta` construction is the same in both versions. |
+| Descriptions | `U1.2_ghq_descriptive.do` | Reads `ind_ghq_lfs`; GHQ distributions and descriptive figures. |
+| Event descriptions | `U1.3_lifeevent_descriptive.do` | Reads `ghqevent_nodrop`; event coding and descriptions. |
+| Initial IV exploration | `U1.4_lifeevent_IV.do`, `U1.5_lifeevent_IV_test.do` | Read `ghqevent`; preliminary specifications and tests. |
+| Life-event selection | `U1.6_lifeevent_IVchoice_deathascore.do`, `U1.7_master_IV_selection_tests.do` | Read `ghqevent`; first stages, candidate instruments, weak-IV diagnostics and related analyses. |
+| Missing GHQ | `U1.7_dealingwith_missingGHQ.do` | Reads `ind_ghq_lfs`; missingness investigation. |
+| Heterogeneity | `U1.8_supervisor_heterogeneity_transitions.do` | Reads `ghqevent`; initial GHQ, employment transition and submarket analyses. Its header requires five variable-name macros to be set before running. |
+| Wage changes | `wage_change_iv_general_fixed.do`, `wage_change_iv_general_fixed_with_OLS.do` | Alternative wage-change analyses using `ghqevent`; the second includes an OLS comparison. |
+| Therapy exploration | `therapy_waitingtime_IV.do` | Reads `ind_ghq_lfs.dta`, `hidp_geo.dta` and `IAPT_LSOA_month_exposure_clean.dta`; constructs LAD-month exposure and an IV analysis. |
+| Claimant-count check | `IAPT_claimant_count_preliminary(1).do` | Reads a Nomis claimant-count CSV, geography lookup and IAPT exposure data; preliminary LAD-month association and residualisation. Claimant count is not a claimant rate. |
+| Stress movement | `U1.9_stress_transition_equalweights.do` | Reads `ghqevent.dta`, O*NET stress scores and a crosswalk; the SOC2000 bridge is an empirical proxy. |
+| Stress, wages and outflows | `U1_10_stress_complete.do` | Reads `ind_ghq_lfs.dta`, O*NET scores and crosswalk; describes transitions and wages. |
+
+## Practical run sequence
+
+1. Configure the source and output paths in **one** U1.1 preparation file. Its source folder must contain the wave-specific UKHLS individual response files. Check its additional local inputs such as `cpi` and `hh_pidp` before execution.
+2. Inspect the resulting `ind_ghq_lfs.dta` and event files, including whether `ghqevent.dta` has been produced by your existing workflow. A fresh checkout does not include any of these datasets.
+3. Run the descriptive or life-event analyses you need. For the master IV script, check the availability of `ivreg2`, `ranktest`, `weakiv` and `weakivtest` in Stata. Some exploratory scripts also use `outreg2` or `esttab`.
+4. For therapy or stress analyses, supply the separate geography, IAPT or O*NET sources identified in the chosen script. Check linkage coverage, time alignment and the meaning of the occupation crosswalk before interpreting coefficients.
+
+## Review priorities
+
+- The preparation file contains `merge n:n year using cpi` in two places. Review the intended year-level CPI merge and key uniqueness before relying on derived files; no change has yet been made to this code.
+- Paths are fixed to a particular Windows installation in several files. A shared configuration and separate raw/derived/output folders would make runs more reliable.
+- Similar scripts represent alternatives or successive revisions. Decide which specification is authoritative before consolidating them; preserve old results and filenames until the comparison is complete.
+- The therapy waiting-time script aggregates equally over LSOAs within LAD-month. Examine the geography and timing assumptions, and assess possible direct effects of access and local labour-market conditions before treating waiting time as a valid instrument.
+- No end-to-end reproduction has yet been performed. Record Stata version, package versions, source-data release, row counts and saved output names as each stage is verified.

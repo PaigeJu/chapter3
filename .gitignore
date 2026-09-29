@@ -1,0 +1,30 @@
+# Licensed or potentially identifying research data and local exports
+*.dta
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.zip
+*.7z
+*.rar
+
+# Generated Stata and document outputs
+*.log
+*.smcl
+*.gph
+*.doc
+*.docx
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Common local output folders
+iv_selection_output/
+supervisor_heterogeneity_output/
+stress_transition_outputs/
+stress_complete_outputs/
+
+# OS/editor files
+.DS_Store
+Thumbs.db

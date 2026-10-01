@@ -2,6 +2,12 @@
 
 Stata scripts for UKHLS data preparation, GHQ-12 descriptions, life-event instrumental-variable analyses, therapy waiting-time exploration, and occupational stress-tolerance analyses. The repository currently contains code only. UKHLS microdata, geographical files, IAPT data, O*NET inputs and generated results must be obtained and stored separately.
 
+## Repository layout
+
+- `ukhls/`: UKHLS preparation and related analysis do-files previously at the repository root.
+- `iapt/`: IAPT preparation and analysis do-files.
+- `docs/`: script index and implementation notes.
+
 ## Start here
 
 1. Read [the script index](docs/script-index.md) to choose an analysis and identify its inputs.
